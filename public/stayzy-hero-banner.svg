@@ -1,0 +1,210 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" width="100%" height="100%">
+  <defs>
+    <!-- Background Linear Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#042815" />
+      <stop offset="50%" stop-color="#07552D" />
+      <stop offset="100%" stop-color="#0A3C22" />
+    </linearGradient>
+
+    <!-- Lime Accent Gradient -->
+    <linearGradient id="limeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8FFA8" />
+      <stop offset="100%" stop-color="#D9F58B" />
+    </linearGradient>
+
+    <!-- Card Background Gradient -->
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0A4626" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#052E19" stop-opacity="0.95" />
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="subtleGlow">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.35; transform: scale(1); }
+      50% { opacity: 0.75; transform: scale(1.08); }
+    }
+    @keyframes floatCard1 {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+    @keyframes floatCard2 {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes floatCard3 {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+    @keyframes radarPulse {
+      0% { r: 4px; opacity: 1; }
+      100% { r: 16px; opacity: 0; }
+    }
+    @keyframes streamLight {
+      0% { stroke-dashoffset: 400; }
+      100% { stroke-dashoffset: 0; }
+    }
+    .pulsing-aura {
+      transform-origin: 950px 140px;
+      animation: pulseGlow 5s ease-in-out infinite;
+    }
+    .card-float-1 { animation: floatCard1 4s ease-in-out infinite; }
+    .card-float-2 { animation: floatCard2 4.5s ease-in-out infinite 0.5s; }
+    .card-float-3 { animation: floatCard3 4s ease-in-out infinite 1s; }
+    .radar-ring { animation: radarPulse 2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite; }
+    .stream-line {
+      stroke-dasharray: 20 80;
+      animation: streamLight 6s linear infinite;
+    }
+    .brand-title {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+    }
+    .brand-sub {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-weight: 500;
+    }
+    .mono-pill {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      font-weight: 600;
+    }
+  </style>
+
+  <!-- Background Canvas -->
+  <rect width="1200" height="440" rx="24" fill="url(#bgGrad)" />
+
+  <!-- Animated Background Grid Pattern -->
+  <g opacity="0.07" stroke="#FFFFFF" stroke-width="1">
+    <line x1="0" y1="80" x2="1200" y2="80" />
+    <line x1="0" y1="160" x2="1200" y2="160" />
+    <line x1="0" y1="240" x2="1200" y2="240" />
+    <line x1="0" y1="320" x2="1200" y2="320" />
+    <line x1="0" y1="400" x2="1200" y2="400" />
+    <line x1="150" y1="0" x2="150" y2="440" />
+    <line x1="300" y1="0" x2="300" y2="440" />
+    <line x1="450" y1="0" x2="450" y2="440" />
+    <line x1="600" y1="0" x2="600" y2="440" />
+    <line x1="750" y1="0" x2="750" y2="440" />
+    <line x1="900" y1="0" x2="900" y2="440" />
+    <line x1="1050" y1="0" x2="1050" y2="440" />
+  </g>
+
+  <!-- Decorative Animated Energy Orbs in Corner -->
+  <circle cx="980" cy="120" r="140" fill="#D9F58B" filter="url(#glow)" class="pulsing-aura" />
+  <circle cx="1060" cy="80" r="80" fill="#10B981" filter="url(#glow)" opacity="0.4" />
+
+  <!-- Glowing Accent Stream Paths -->
+  <path d="M 0 380 Q 400 300 800 380 T 1200 340" fill="none" stroke="#D9F58B" stroke-width="2" opacity="0.3" class="stream-line" />
+  <path d="M 0 340 Q 500 420 900 320 T 1200 380" fill="none" stroke="#34D399" stroke-width="1.5" opacity="0.25" class="stream-line" />
+
+  <!-- =========================================================================
+       BRAND HEADER & HERO MESSAGING
+  ========================================================================= -->
+  <g transform="translate(60, 55)">
+    <!-- Top Live System Badge -->
+    <g transform="translate(0, 0)">
+      <rect width="210" height="28" rx="14" fill="#032011" stroke="#12683A" stroke-width="1.5" />
+      <!-- Animated Live Beacon -->
+      <circle cx="16" cy="14" r="7" fill="none" stroke="#D9F58B" stroke-width="1.5" class="radar-ring" />
+      <circle cx="16" cy="14" r="4" fill="#D9F58B" />
+      <text x="32" y="18" fill="#D9F58B" class="mono-pill">PRODUCTION ACTIVE • 2026</text>
+    </g>
+
+    <!-- Main Logo & Brand Mark -->
+    <g transform="translate(0, 48)">
+      <!-- Logo Icon Box -->
+      <rect width="52" height="52" rx="16" fill="url(#limeGrad)" filter="url(#subtleGlow)" />
+      <text x="26" y="36" font-family="system-ui, sans-serif" font-weight="900" font-size="28" fill="#07552D" text-anchor="middle">S</text>
+
+      <!-- Brand Title Text -->
+      <text x="68" y="39" fill="#FFFFFF" font-size="44" class="brand-title">STAYZY</text>
+      <text x="250" y="38" fill="#D9F58B" font-size="14" font-weight="bold" font-family="system-ui, sans-serif" letter-spacing="1">PG PLATFORM</text>
+    </g>
+
+    <!-- Tagline & Description -->
+    <text x="0" y="132" fill="#E2E8DE" font-size="20" class="brand-sub" font-weight="600">
+      The Enterprise PG &amp; Co-Living Accommodation Management Operating System
+    </text>
+    <text x="0" y="156" fill="#A3CFBB" font-size="13" class="brand-sub">
+      Single Centralized Backend • Tri-Portal Isolation (Customer, PG Owner, Admin) • Real-Time Bed Allocation • Zero Native Popups
+    </text>
+
+    <!-- Badges Row -->
+    <g transform="translate(0, 180)">
+      <!-- Pill 1: Next.js 14 -->
+      <rect x="0" y="0" width="124" height="26" rx="8" fill="#052E19" stroke="#167442" stroke-width="1" />
+      <text x="62" y="17" fill="#FFFFFF" text-anchor="middle" class="mono-pill">Next.js 14 App</text>
+
+      <!-- Pill 2: TypeScript -->
+      <rect x="134" y="0" width="112" height="26" rx="8" fill="#052E19" stroke="#167442" stroke-width="1" />
+      <text x="190" y="17" fill="#60A5FA" text-anchor="middle" class="mono-pill">TypeScript</text>
+
+      <!-- Pill 3: Prisma ORM -->
+      <rect x="256" y="0" width="118" height="26" rx="8" fill="#052E19" stroke="#167442" stroke-width="1" />
+      <text x="315" y="17" fill="#34D399" text-anchor="middle" class="mono-pill">Prisma ORM</text>
+
+      <!-- Pill 4: SHA-256 OTP -->
+      <rect x="384" y="0" width="144" height="26" rx="8" fill="#052E19" stroke="#167442" stroke-width="1" />
+      <text x="456" y="17" fill="#FBBF24" text-anchor="middle" class="mono-pill">SHA-256 + OAuth</text>
+
+      <!-- Pill 5: 53 Passing Tests -->
+      <rect x="538" y="0" width="140" height="26" rx="8" fill="#052E19" stroke="#22C55E" stroke-width="1" />
+      <text x="608" y="17" fill="#86EFAC" text-anchor="middle" class="mono-pill">53 E2E Tests: 100%</text>
+    </g>
+  </g>
+
+  <!-- =========================================================================
+       THREE ROLE PORTAL PREVIEW CARDS (BOTTOM INTERACTION TILES)
+  ========================================================================= -->
+  <g transform="translate(60, 290)">
+    <!-- Card 1: Customer Application -->
+    <g class="card-float-1" transform="translate(0, 0)">
+      <rect width="340" height="110" rx="16" fill="url(#cardGrad)" stroke="#167442" stroke-width="1.5" />
+      <rect x="16" y="16" width="36" height="36" rx="10" fill="#E8FFA8" />
+      <text x="34" y="40" font-family="system-ui, sans-serif" font-weight="900" font-size="18" fill="#07552D" text-anchor="middle">C</text>
+      <text x="64" y="32" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="700" font-size="15">Customer Application</text>
+      <text x="64" y="48" fill="#D9F58B" font-family="system-ui, sans-serif" font-weight="600" font-size="11">Mobile &amp; Web Experience</text>
+      <text x="16" y="74" fill="#A3CFBB" font-family="system-ui, sans-serif" font-size="11">Locality search, bed reserve, instant UPI checkout, stays &amp; 6-item bottom nav.</text>
+      <rect x="16" y="86" width="70" height="14" rx="4" fill="#07552D" />
+      <text x="51" y="96" fill="#D9F58B" text-anchor="middle" class="mono-pill" font-size="9">/customer/*</text>
+    </g>
+
+    <!-- Card 2: PG Owner Portal -->
+    <g class="card-float-2" transform="translate(370, 0)">
+      <rect width="340" height="110" rx="16" fill="url(#cardGrad)" stroke="#167442" stroke-width="1.5" />
+      <rect x="16" y="16" width="36" height="36" rx="10" fill="#E8FFA8" />
+      <text x="34" y="40" font-family="system-ui, sans-serif" font-weight="900" font-size="18" fill="#07552D" text-anchor="middle">O</text>
+      <text x="64" y="32" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="700" font-size="15">PG Owner Partner Portal</text>
+      <text x="64" y="48" fill="#D9F58B" font-family="system-ui, sans-serif" font-weight="600" font-size="11">SaaS Property Command</text>
+      <text x="16" y="74" fill="#A3CFBB" font-family="system-ui, sans-serif" font-size="11">Room/bed inventory, 6-metric KPI occupancy, resident check-in &amp; payout ledger.</text>
+      <rect x="16" y="86" width="58" height="14" rx="4" fill="#07552D" />
+      <text x="45" y="96" fill="#D9F58B" text-anchor="middle" class="mono-pill" font-size="9">/owner/*</text>
+    </g>
+
+    <!-- Card 3: Platform Admin Command -->
+    <g class="card-float-3" transform="translate(740, 0)">
+      <rect width="340" height="110" rx="16" fill="url(#cardGrad)" stroke="#167442" stroke-width="1.5" />
+      <rect x="16" y="16" width="36" height="36" rx="10" fill="#E8FFA8" />
+      <text x="34" y="40" font-family="system-ui, sans-serif" font-weight="900" font-size="18" fill="#07552D" text-anchor="middle">A</text>
+      <text x="64" y="32" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="700" font-size="15">Admin Operations Center</text>
+      <text x="64" y="48" fill="#D9F58B" font-family="system-ui, sans-serif" font-weight="600" font-size="11">Staff &amp; Governance Center</text>
+      <text x="16" y="74" fill="#A3CFBB" font-family="system-ui, sans-serif" font-size="11">12 modules, PG verification desk, unassigned issue triage &amp; audit trails.</text>
+      <rect x="16" y="86" width="58" height="14" rx="4" fill="#07552D" />
+      <text x="45" y="96" fill="#D9F58B" text-anchor="middle" class="mono-pill" font-size="9">/admin/*</text>
+    </g>
+  </g>
+</svg>
