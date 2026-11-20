@@ -1,0 +1,357 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String         @id @default(uuid())
+  email            String         @unique
+  phone            String?
+  name             String
+  role             String         @default("CUSTOMER") // ADMIN, OPS, SUPPORT, OWNER, CUSTOMER
+  status           String         @default("ACTIVE")   // ACTIVE, SUSPENDED, PENDING_KYC
+  avatar           String?
+  movingTo         String?        // Profile setup info for customers
+  preferredLocality String?
+  genderPreference String?        // MALE, FEMALE, UNISEX
+  occupation       String?
+  profileCompleted Boolean        @default(false)
+  passwordHash     String?
+  salt             String?
+  isVerified       Boolean        @default(false)
+  kycDocuments     String?        // JSON string of KYC documents status
+  permissions      String?        // JSON string of custom role permissions
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  properties      Property[]
+  bookings        Booking[]       @relation("CustomerBookings")
+  visits          Visit[]
+  tickets         SupportTicket[] @relation("CustomerTickets")
+  payouts         Payout[]
+  savedProperties SavedProperty[]
+  reviews         Review[]
+  notifications   Notification[]
+  accounts        Account[]
+  sessions        Session[]
+}
+
+model Property {
+  id                String          @id @default(uuid())
+  ownerId           String
+  name              String
+  slug              String          @unique
+  address           String
+  locality          String
+  city              String          @default("Bengaluru")
+  description       String?
+  rating            Float           @default(4.5)
+  reviewCount       Int             @default(120)
+  basePricePerNight Int             @default(700)
+  depositAmount     Int             @default(5000)
+  minStayDays       Int             @default(7)
+  noticePeriodDays  Int             @default(7)
+  rules             String?         // JSON string of rules
+  status            String          @default("LISTED") // PENDING_VERIFICATION, LISTED, UNLISTED, REJECTED
+  verificationDocs  String?         // JSON string of doc statuses
+  verifiedAt        DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  owner             User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  photos            PropertyPhoto[]
+  amenities         Amenity[]
+  rooms             Room[]
+  beds              Bed[]
+  bookings          Booking[]
+  visits            Visit[]
+  supportTickets    SupportTicket[]
+  maintenanceBlocks MaintenanceBlock[]
+  payouts           Payout[]
+  savedBy           SavedProperty[]
+  reviews           Review[]
+}
+
+model PropertyPhoto {
+  id         String   @id @default(uuid())
+  propertyId String
+  url        String
+  caption    String?
+  sortOrder  Int      @default(0)
+  isCover    Boolean  @default(false)
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+model Amenity {
+  id         String   @id @default(uuid())
+  propertyId String
+  name       String
+  icon       String?
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+model Room {
+  id                String             @id @default(uuid())
+  propertyId        String
+  roomNumber        String
+  sharingType       Int                @default(2) // 1, 2, 3, 4
+  floor             Int                @default(1)
+  isAc              Boolean            @default(false)
+  basePricePerNight Int                @default(700)
+
+  property          Property           @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  beds              Bed[]
+  maintenanceBlocks MaintenanceBlock[]
+}
+
+model Bed {
+  id                String             @id @default(uuid())
+  roomId            String
+  propertyId        String
+  bedNumber         String             // e.g., "Bed 1", "Bed A"
+  status            String             @default("AVAILABLE") // AVAILABLE, OCCUPIED, MAINTENANCE, RESERVED
+
+  room              Room               @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  property          Property           @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  bookings          Booking[]
+  maintenanceBlocks MaintenanceBlock[]
+}
+
+model Booking {
+  id             String    @id @default(uuid())
+  bookingNumber  String    @unique // e.g. "BKG78421"
+  customerId     String
+  propertyId     String
+  bedId          String?   // null when "Paid, Not Assigned"
+  roomType       String    @default("Single Bed - Non AC")
+  checkInDate    DateTime
+  checkOutDate   DateTime
+  nightsCount    Int       @default(7)
+  nightlyRate    Int       @default(700)
+  totalAmount    Int       @default(4900)
+  status         String    @default("CONFIRMED") // CONFIRMED, PAID_UNASSIGNED, COMPLETED, CANCELLED, REFUND_REQUESTED
+  isCheckedIn    Boolean   @default(false)
+  checkedInAt    DateTime?
+  checkedOutAt   DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  customer       User      @relation("CustomerBookings", fields: [customerId], references: [id])
+  property       Property  @relation(fields: [propertyId], references: [id])
+  bed            Bed?      @relation(fields: [bedId], references: [id])
+  payments       Payment[]
+  refunds        Refund[]
+}
+
+model Payment {
+  id            String    @id @default(uuid())
+  bookingId     String
+  transactionId String    @unique
+  amount        Int
+  method        String    @default("UPI") // UPI, CARD
+  status        String    @default("PAID") // PAID, REFUNDED, FAILED
+  invoiceNumber String    @default("INV-872341")
+  createdAt     DateTime  @default(now())
+
+  booking       Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  refunds       Refund[]
+}
+
+model Refund {
+  id          String    @id @default(uuid())
+  paymentId   String
+  bookingId   String
+  amount      Int
+  reason      String
+  status      String    @default("PENDING_REVIEW") // PENDING_REVIEW, PROCESSING, COMPLETED, REJECTED
+  reviewedBy  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  payment     Payment   @relation(fields: [paymentId], references: [id])
+  booking     Booking   @relation(fields: [bookingId], references: [id])
+}
+
+model MaintenanceBlock {
+  id         String   @id @default(uuid())
+  propertyId String
+  roomId     String?
+  bedId      String?
+  startDate  DateTime
+  endDate    DateTime
+  reason     String
+  createdAt  DateTime @default(now())
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  room       Room?    @relation(fields: [roomId], references: [id])
+  bed        Bed?     @relation(fields: [bedId], references: [id])
+}
+
+model Visit {
+  id            String    @id @default(uuid())
+  customerId    String
+  propertyId    String
+  scheduledTime DateTime
+  status        String    @default("SCHEDULED") // SCHEDULED, PENDING, APPROVED, RESCHEDULED, CANCELLED, COMPLETED
+  note          String?
+  createdAt     DateTime  @default(now())
+
+  customer      User      @relation(fields: [customerId], references: [id])
+  property      Property  @relation(fields: [propertyId], references: [id])
+}
+
+model SupportTicket {
+  id              String    @id @default(uuid())
+  ticketNumber    String    @unique // e.g., "ST-5567", "TKT-4172"
+  customerId      String?
+  propertyId      String
+  subject         String
+  description     String?
+  priority        String    @default("MEDIUM") // LOW, MEDIUM, HIGH
+  status          String    @default("OPEN")   // OPEN, ASSIGNED, RESOLVED, CLOSED
+  assigneeName    String?
+  resolutionNotes String?
+  createdAt       DateTime  @default(now())
+  resolvedAt      DateTime?
+
+  customer        User?     @relation("CustomerTickets", fields: [customerId], references: [id])
+  property        Property  @relation(fields: [propertyId], references: [id])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String?
+  actorName  String
+  actorRole  String   // ADMIN, OPS, SUPPORT, OWNER, SYSTEM
+  action     String   // e.g. "Resolved ticket", "Assigned bed", "Submitted PG", "Created escalation"
+  entityType String   // Booking, Ticket, Property, Escalation
+  entityId   String
+  details    String   // e.g. "ST-5567", "BKG78418 -> A-102 (Bed 3)"
+  createdAt  DateTime @default(now())
+}
+
+model Payout {
+  id          String    @id @default(uuid())
+  ownerId     String
+  propertyId  String
+  amount      Int
+  status      String    @default("PENDING") // PENDING, PROCESSED
+  requestedAt DateTime  @default(now())
+  processedAt DateTime?
+
+  owner       User      @relation(fields: [ownerId], references: [id])
+  property    Property  @relation(fields: [propertyId], references: [id])
+}
+
+model SavedProperty {
+  id         String   @id @default(uuid())
+  userId     String
+  propertyId String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, propertyId])
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  propertyId String
+  userId     String
+  rating     Float    @default(5.0)
+  comment    String
+  createdAt  DateTime @default(now())
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO, BOOKING, PAYMENT, VERIFICATION, TICKET, MAINTENANCE
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Escalation {
+  id         String   @id @default(uuid())
+  code       String   @unique // e.g. "E-1042"
+  title      String
+  propertyId String
+  priority   String   @default("HIGH") // HIGH, MEDIUM, LOW
+  status     String   @default("OPEN") // OPEN, RESOLVED, IN_PROGRESS
+  assignedTo String?
+  since      String   @default("10 Dec, 9:10 AM")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  category  String   @default("GENERAL")
+  updatedAt DateTime @updatedAt
+}
+
+model OTPVerification {
+  id          String    @id @default(uuid())
+  destination String    @default("") // Phone number or Email address
+  phone       String?   // Backward compatibility with previous seed
+  type        String    @default("PHONE") // "PHONE" | "EMAIL"
+  otp         String    // Plaintext in dev / test mode
+  otpHash     String?   // SHA-256 hash of the 6-digit OTP
+  purpose     String    @default("CUSTOMER_LOGIN") // "CUSTOMER_LOGIN" | "OWNER_LOGIN" | "ADMIN_MFA"
+  expiresAt   DateTime
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(5)
+  verified    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  @@index([destination, verified])
+}
+
+model Account {
+  id                String    @id @default(uuid())
+  userId            String
+  provider          String    // "GOOGLE", "PHONE_OTP", "EMAIL_OTP", "CREDENTIALS"
+  providerAccountId String
+  verifiedAt        DateTime?
+  createdAt         DateTime  @default(now())
+
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expiresAt    DateTime
+  userAgent    String?
+  ipAddress    String?
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model StaffPermission {
+  id          String   @id @default(uuid())
+  role        String   @unique // ADMIN, OPS, SUPPORT
+  permissions String   // JSON string of permissions: {"view_dashboard": true, "manage_bookings": true, ...}
+  updatedAt   DateTime @updatedAt
+}

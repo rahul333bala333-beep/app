@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #07552D;
+  --lime: #D9F58B;
+  --bg-canvas: #F7F9F5;
+  --text-dark: #202820;
+}
+
+body {
+  color: var(--text-dark);
+  background: var(--bg-canvas);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom crisp scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F4EE;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5C0;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #07552D;
+}
+
+/* Smooth badge and button transitions */
+.btn-primary {
+  @apply bg-[#07552D] hover:bg-[#054223] text-white font-medium px-4 py-2 rounded-lg transition-colors duration-150 inline-flex items-center justify-center gap-2;
+}
+
+.btn-lime {
+  @apply bg-[#D9F58B] hover:bg-[#c8eb74] text-[#07552D] font-medium px-4 py-2 rounded-lg transition-colors duration-150 inline-flex items-center justify-center gap-2;
+}
+
+.btn-secondary {
+  @apply bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-medium px-4 py-2 rounded-lg transition-colors duration-150 inline-flex items-center justify-center gap-2;
+}
+
+.badge-active {
+  @apply bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-green-200 inline-flex items-center gap-1;
+}
+
+.badge-pending {
+  @apply bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-amber-200 inline-flex items-center gap-1;
+}
+
+.badge-issue {
+  @apply bg-rose-100 text-rose-800 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-rose-200 inline-flex items-center gap-1;
+}
+
+.badge-lime {
+  @apply bg-[#D9F58B] text-[#07552D] text-xs font-bold px-2.5 py-0.5 rounded-full border border-[#c4e868] inline-flex items-center gap-1;
+}
+
